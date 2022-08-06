@@ -6,14 +6,19 @@ RUN apt update && apt install -y \
     vim \
     htop \
     jq \
+    nkf \
     gcc \
-    make
+    make \
+    libgl1-mesa-dev
 
+# nodejs
 RUN curl -Ls https://deb.nodesource.com/setup_18.x | bash
 RUN apt update && apt install -y nodejs
 
 RUN useradd -m user
+USER user
 
+# rust
 ENV RUST_VERSION stable
 RUN curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain ${RUST_VERSION}
 RUN echo 'source /home/user/.cargo/env' >> /home/user/.bashrc
