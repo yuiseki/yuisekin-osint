@@ -1,6 +1,6 @@
 {
   "name": "Dockerfile",
-  "dockerFile": "./Dockerfile",
+  "dockerFile": "../Dockerfile",
   "remoteUser": "user",
   "overrideCommand": false,
   "customizations": {
