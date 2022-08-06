@@ -31,6 +31,9 @@ RUN apt update && DEBIAN_FRONTEND=noninteractive apt install -y \
     dnsutils \
     recon-ng \
     p0f \
+    ipcalc \
+    grepcidr \
+    aha \
     #
     # Active OSINT
     #
@@ -41,6 +44,10 @@ RUN apt update && DEBIAN_FRONTEND=noninteractive apt install -y \
     ndiff \
     # nc
     ncat
+
+# asn
+RUN curl -Ls https://raw.githubusercontent.com/nitefood/asn/master/asn > /usr/bin/asn && \
+    chmod 0755 /usr/bin/asn
 
 # nodejs
 RUN curl -Ls https://deb.nodesource.com/setup_18.x | bash
