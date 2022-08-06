@@ -66,6 +66,8 @@ RUN rustup install stable
 # htmlq
 RUN cargo install htmlq
 
+RUN recon-cli -C "marketplace install all"
+
 #WORKDIR /workspaces/yuisekin-osint
 
 # masscan
