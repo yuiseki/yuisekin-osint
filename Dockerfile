@@ -13,7 +13,7 @@ RUN apt update && DEBIAN_FRONTEND=noninteractive apt install -y \
     build-essential \
     libgl1-mesa-dev \
     #
-    # Indirect OSINT
+    # Passive OSINT
     #
     # ping
     iputils-ping \
@@ -32,7 +32,7 @@ RUN apt update && DEBIAN_FRONTEND=noninteractive apt install -y \
     recon-ng \
     p0f \
     #
-    # Direct OSINT
+    # Active OSINT
     #
     dnsmap \
     zmap \
@@ -50,14 +50,14 @@ RUN useradd -m user
 USER user
 
 # rust
-#ENV RUST_VERSION stable
-#RUN curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain ${RUST_VERSION}
-#RUN echo 'source /home/user/.cargo/env' >> /home/user/.bashrc
-#ENV PATH="/home/user/.cargo/bin:${PATH}"
+ENV RUST_VERSION stable
+RUN curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain ${RUST_VERSION}
+RUN echo 'source /home/user/.cargo/env' >> /home/user/.bashrc
+ENV PATH="/home/user/.cargo/bin:${PATH}"
+RUN rustup install stable
 
-#RUN rustup install stable
-#RUN rustup component add rls rust-analysis
-#RUN cargo install htmlq
+# htmlq
+RUN cargo install htmlq
 
 #WORKDIR /workspaces/yuisekin-osint
 
