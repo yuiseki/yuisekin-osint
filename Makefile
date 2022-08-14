@@ -25,15 +25,16 @@ geoip:
 asn:
 	asn $(filter-out $@,$(MAKECMDGOALS))
 
-# make recon-domains google.com
-recon-domains:
+# make recon-domain google.com
+recon-domain:
 	recon-cli -w $(filter-out $@,$(MAKECMDGOALS))
 	recon-cli -m recon/domains-hosts/certificate_transparency -x -w $(filter-out $@,$(MAKECMDGOALS)) -o SOURCE=$(filter-out $@,$(MAKECMDGOALS))
 	recon-cli -m recon/domains-hosts/ssl_san -x -w $(filter-out $@,$(MAKECMDGOALS)) -o SOURCE=$(filter-out $@,$(MAKECMDGOALS))
 
-# make recon-results google.com
-recon-results:
-	recon-cli -m reporting/csv -x -w $(filter-out $@,$(MAKECMDGOALS)) -o HEADERS=hostname -o FILENAME=./recon.csv
+# make recon-result google.com
+recon-result:
+	mkdir -p ./tmp/$(filter-out $@,$(MAKECMDGOALS))/
+	recon-cli -m reporting/csv -x -w $(filter-out $@,$(MAKECMDGOALS)) -o HEADERS=hostname -o FILENAME=/workspaces/yuisekin-osint/tmp/$(filter-out $@,$(MAKECMDGOALS))/recon.csv
 
 %:
 	@:
