@@ -1,17 +1,24 @@
 FROM ubuntu:22.04
 
 RUN apt update && DEBIAN_FRONTEND=noninteractive apt install -y \
+    #
+    # Essential tools
+    #
     git \
     curl \
     vim \
     htop \
     jq \
     nkf \
-    python3-pip \
+    #
+    # Development
+    #
     gcc \
     make \
     build-essential \
-    libgl1-mesa-dev \
+    python3-pip \
+    ruby-dev \
+    zlib1g-dev \
     #
     # Passive OSINT
     #
@@ -53,20 +60,25 @@ RUN curl -Ls https://raw.githubusercontent.com/nitefood/asn/master/asn > /usr/bi
 RUN curl -Ls https://deb.nodesource.com/setup_18.x | bash
 RUN apt update && apt install -y nodejs
 
+# wpscan
+# https://github.com/wpscanteam/wpscan
+RUN gem install wpscan
+
 RUN useradd -m user
 USER user
 
+# install recon modules
+RUN recon-cli -C "marketplace install all"
+
 # rust
-ENV RUST_VERSION stable
-RUN curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain ${RUST_VERSION}
-RUN echo 'source /home/user/.cargo/env' >> /home/user/.bashrc
-ENV PATH="/home/user/.cargo/bin:${PATH}"
-RUN rustup install stable
+#ENV RUST_VERSION stable
+#RUN curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain ${RUST_VERSION}
+#RUN echo 'source /home/user/.cargo/env' >> /home/user/.bashrc
+#ENV PATH="/home/user/.cargo/bin:${PATH}"
+#RUN rustup install stable
 
 # htmlq
-RUN cargo install htmlq
-
-RUN recon-cli -C "marketplace install all"
+#RUN cargo install htmlq
 
 #WORKDIR /workspaces/yuisekin-osint
 
