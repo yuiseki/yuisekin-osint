@@ -1,9 +1,9 @@
 
 osint:
+	make geoip $(filter-out $@,$(MAKECMDGOALS))
 	make nslookup $(filter-out $@,$(MAKECMDGOALS))
 	make whois $(filter-out $@,$(MAKECMDGOALS))
 	make dig $(filter-out $@,$(MAKECMDGOALS))
-	make geoip $(filter-out $@,$(MAKECMDGOALS))
 
 # make nslookup google.com
 nslookup:
