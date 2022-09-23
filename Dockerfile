@@ -1,15 +1,20 @@
 FROM ubuntu:22.04
 
+RUN apt update
+RUN apt install -y git curl
+RUN apt install -y vim htop make jq
+
+# nodejs
+RUN curl -Ls https://deb.nodesource.com/setup_18.x | bash
+RUN apt update && apt install -y nodejs
+RUN npm i -g npm
+
 RUN apt update && DEBIAN_FRONTEND=noninteractive apt install -y \
     #
     # Essential tools
     #
-    git \
-    curl \
-    vim \
-    htop \
-    jq \
     nkf \
+    sqlite3 \
     #
     # Development
     #
@@ -55,10 +60,6 @@ RUN apt update && DEBIAN_FRONTEND=noninteractive apt install -y \
 # asn
 RUN curl -Ls https://raw.githubusercontent.com/nitefood/asn/master/asn > /usr/bin/asn && \
     chmod 0755 /usr/bin/asn
-
-# nodejs
-RUN curl -Ls https://deb.nodesource.com/setup_18.x | bash
-RUN apt update && apt install -y nodejs
 
 # wpscan
 # https://github.com/wpscanteam/wpscan
