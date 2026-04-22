@@ -45,5 +45,33 @@ recon-domain:
 	recon-cli -m reporting/csv -x -w $(filter-out $@,$(MAKECMDGOALS)) -o HEADERS=True -o TABLE=hosts -o FILENAME=/workspaces/yuisekin-osint/tmp/$(filter-out $@,$(MAKECMDGOALS))/hostnames.csv
 	recon-cli -m reporting/csv -x -w $(filter-out $@,$(MAKECMDGOALS)) -o HEADERS=True -o TABLE=contacts -o FILENAME=/workspaces/yuisekin-osint/tmp/$(filter-out $@,$(MAKECMDGOALS))/contacts.csv
 
+# --- Docker image build / shell (host side) ---
+
+IMAGE_NETWORK := yuisekin-osint-network:latest
+IMAGE_PERSON  := yuisekin-osint-person:latest
+REPORTS_DIR   := $(PWD)/osint-reports
+GHUNT_VOLUME  := yuisekin-osint-ghunt
+
+build-network:
+	docker build -f Dockerfile.network -t $(IMAGE_NETWORK) .
+
+build-person:
+	docker build -f Dockerfile.person -t $(IMAGE_PERSON) .
+
+shell-network: build-network
+	docker run --rm -it -v "$(PWD):/workspaces/yuisekin-osint" $(IMAGE_NETWORK) /bin/bash
+
+shell-person: build-person
+	mkdir -p "$(REPORTS_DIR)"
+	docker run --rm -it \
+	  -v "$(REPORTS_DIR):/reports" \
+	  -v "$(GHUNT_VOLUME):/root/.config/ghunt" \
+	  $(IMAGE_PERSON) /bin/bash
+
+ghunt-login: build-person
+	docker run --rm -it \
+	  -v "$(GHUNT_VOLUME):/root/.config/ghunt" \
+	  $(IMAGE_PERSON) ghunt login
+
 %:
 	@:

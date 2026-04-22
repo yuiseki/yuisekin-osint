@@ -1,0 +1,39 @@
+FROM python:3.11-slim
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1
+
+ARG MOSINT_VERSION=3.0.4
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        git \
+        curl \
+        ca-certificates \
+        make \
+        jq \
+    && rm -rf /var/lib/apt/lists/*
+
+# Python-based OSINT tools
+#   maigret       — username across 3000+ sites (soxoj/maigret)
+#   ghunt         — Google account OSINT (mxrch/GHunt)
+#   theHarvester  — aggregator for emails/subdomains (laramies/theHarvester)
+RUN pip install --no-cache-dir \
+        maigret \
+        ghunt \
+        theHarvester
+
+# Go-based OSINT tool: mosint (alpkeskin/mosint)
+RUN set -eux; \
+    case "$(uname -m)" in \
+      x86_64)  MARCH=amd64 ;; \
+      aarch64) MARCH=arm64 ;; \
+      *) echo "Unsupported arch: $(uname -m)"; exit 1 ;; \
+    esac; \
+    curl -fsSL "https://github.com/alpkeskin/mosint/releases/download/v${MOSINT_VERSION}/mosint_${MOSINT_VERSION}_linux_${MARCH}.tar.gz" \
+      | tar -xz -C /usr/local/bin mosint
+
+VOLUME ["/reports", "/root/.config/ghunt"]
+WORKDIR /reports
+
+CMD ["/bin/bash"]
