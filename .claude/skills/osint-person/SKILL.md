@@ -20,6 +20,28 @@ tags:
 
 **前提: 対象者本人の同意または業務上の正当な目的がある場合のみ使用する。** 個人情報保護法・GDPR に抵触する可能性がある。
 
+**実行環境: 必ず Docker コンテナ内で実行する。ツールを host に直接インストールしない。**
+
+## セットアップ
+
+repo: `_20_percent_rule/yuiseki/yuisekin-osint/`
+
+```bash
+make shell-person   # build-person を自動実行してコンテナに入る
+```
+
+コンテナ内で Maigret / Mosint / GHunt / theHarvester が PATH に入っている。`/reports` は host の `./osint-reports/` にマウントされる。
+
+### GHunt の初回 Cookie 登録
+
+調査専用の捨て Google アカウントで運用（本人アカウントは使わない）:
+
+```bash
+make ghunt-login
+```
+
+Cookie は `yuisekin-osint-ghunt` named volume に永続化される。
+
 ## 利用可能ツール
 
 | ツール | 入力 | 出力 | 無料枠 |
@@ -32,29 +54,7 @@ tags:
 
 月1回・1人調査想定なら HIBP は Web 版で十分。
 
-## セットアップ
-
-Docker でビルドして shell に入る:
-
-```bash
-make build-person
-make shell-person
-```
-
-コンテナ内で各ツールが PATH に入っている。`/reports` ディレクトリは host の `./osint-reports/` にマウントされる。
-
-### GHunt の初期設定（初回のみ）
-
-GHunt は Google アカウント Cookie が必要。**本人のアカウントは使わず、調査専用の捨てアカウントを作る。**
-
-```bash
-make ghunt-login
-# ブラウザ拡張 (GHunt Companion) または手動で master cookie を貼り付け
-```
-
-Cookie は `yuisekin-osint-ghunt` named volume に永続化される。
-
-## 調査ワークフロー（コンテナ内で実行）
+## 調査ワークフロー（すべて `make shell-person` 後のコンテナ内で実行）
 
 ### ハンドルネーム調査
 
@@ -81,7 +81,7 @@ mosint -e $EMAIL -o $OUT/mosint.json
 # 2. Gmail なら GHunt で Google 生態系
 ghunt email $EMAIL --json $OUT/ghunt.json
 
-# 3. HaveIBeenPwned は Web でチェック
+# 3. HaveIBeenPwned はブラウザで
 #    https://haveibeenpwned.com/account/<email>
 
 # 4. ローカル部分を Maigret へ
@@ -125,7 +125,7 @@ LinkedIn / X / Qiita / Zenn 等ログイン必須サイトは手動確認（閲�
 
 ## 補遺: SpiderFoot
 
-より包括的な自動調査:
+より包括的な自動調査（別コンテナで起動）:
 
 ```bash
 docker run --rm -it -p 5001:5001 ghcr.io/smicallef/spiderfoot:latest
